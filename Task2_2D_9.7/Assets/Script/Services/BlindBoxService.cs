@@ -7,6 +7,7 @@ public class BlindBoxService : MonoBehaviour
     [SerializeField] private List<ItemDefinition> items = new();
 
     public event Action<DrawResult> DrawCompleted;
+    public event Action<IReadOnlyList<DrawResult>> MultiDrawCompleted;
     public event Action CollectionChanged;
 
     private SaveService saveService;
@@ -65,6 +66,23 @@ public class BlindBoxService : MonoBehaviour
         CollectionChanged?.Invoke();
 
         return result;
+    }
+
+    public IReadOnlyList<DrawResult> DrawMultiple(int count)
+    {
+        if (count <= 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
+
+        List<DrawResult> results = new(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            if (CanDraw)
+                results.Add(Draw());
+        }
+
+        MultiDrawCompleted?.Invoke(results);
+        return results;
     }
 
     public bool IsUnlocked(string itemId)

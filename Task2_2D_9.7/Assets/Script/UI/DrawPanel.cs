@@ -6,11 +6,13 @@ public class DrawPanel : MonoBehaviour
 {
     [SerializeField] private BlindBoxService service;
     [SerializeField] private Button drawButton;
+    [SerializeField] private Button drawFiveButton;
     [SerializeField] private TMP_Text progressText;
 
     private void OnEnable()
     {
         drawButton.onClick.AddListener(OnDrawClicked);
+        drawFiveButton.onClick.AddListener(OnDrawFiveClicked);
         service.CollectionChanged += Refresh;
     }
 
@@ -22,6 +24,7 @@ public class DrawPanel : MonoBehaviour
     private void OnDisable()
     {
         drawButton.onClick.RemoveListener(OnDrawClicked);
+        drawFiveButton.onClick.RemoveListener(OnDrawFiveClicked);
         service.CollectionChanged -= Refresh;
     }
 
@@ -29,6 +32,11 @@ public class DrawPanel : MonoBehaviour
     {
         if (service.CanDraw)
             service.Draw();
+    }
+
+    private void OnDrawFiveClicked()
+    {
+        service.DrawMultiple(5);
     }
 
     private void Refresh()
@@ -45,5 +53,6 @@ public class DrawPanel : MonoBehaviour
             $"抽取次数：{service.SaveData.totalDrawCount}";
 
         drawButton.interactable = service.CanDraw;
+        drawFiveButton.interactable = service.CanDraw;
     }
 }
