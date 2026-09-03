@@ -17,7 +17,18 @@ public class GalleryItemView : MonoBehaviour
         lockMask.SetActive(!unlocked);
         nameText.text = unlocked ? item.displayName : "？？？";
         rarityText.text = unlocked
-            ? item.rarity.ToString()
+            ? GetRarityName(item.rarity)
             : "未解锁";
+    }
+
+    private static string GetRarityName(ItemRarity rarity)
+    {
+        return rarity switch
+        {
+            ItemRarity.Blue => "蓝色品质",
+            ItemRarity.Purple => "紫色品质",
+            ItemRarity.Gold => "金色品质",
+            _ => "未知品质"
+        };
     }
 }
