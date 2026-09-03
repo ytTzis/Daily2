@@ -12,6 +12,10 @@ public class DrawPanel : MonoBehaviour
     {
         drawButton.onClick.AddListener(OnDrawClicked);
         service.CollectionChanged += Refresh;
+    }
+
+    private void Start()
+    {
         Refresh();
     }
 
@@ -28,8 +32,14 @@ public class DrawPanel : MonoBehaviour
 
     private void Refresh()
     {
+        if (progressText == null || service == null || service.SaveData == null)
+        {
+            Debug.LogError("DrawPanel 引用或存档数据尚未初始化", this);
+            return;
+        }
+
         progressText.text =
-            $"已解锁：{service.SaveData.unlockedItemIds.Count}" +
+            $"已解锁：{service.SaveData.unlockedItemIds?.Count ?? 0}" +
             $"/{service.Items.Count}  " +
             $"抽取次数：{service.SaveData.totalDrawCount}";
     }
