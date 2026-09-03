@@ -19,14 +19,10 @@ public class BlindBoxService : MonoBehaviour
     {
         get
         {
-            if (saveData?.unlockedItemIds == null)
-                return false;
-
             foreach (ItemDefinition item in items)
             {
                 if (item != null &&
-                    !string.IsNullOrWhiteSpace(item.itemId) &&
-                    !saveData.unlockedItemIds.Contains(item.itemId))
+                    !string.IsNullOrWhiteSpace(item.itemId))
                 {
                     return true;
                 }
@@ -47,24 +43,18 @@ public class BlindBoxService : MonoBehaviour
 
     public DrawResult Draw()
     {
-        List<ItemDefinition> availableItems = GetAvailableItems();
+        List<ItemDefinition> drawableItems = GetDrawableItems();
 
-        if (availableItems.Count == 0)
-            throw new InvalidOperationException("所有物品均已解锁");
+        if (drawableItems.Count == 0)
+            throw new InvalidOperationException("没有配置可抽取的物品");
 
-        ItemDefinition item = DrawByWeight(availableItems);
+        ItemDefinition item = DrawByWeight(drawableItems);
 
         bool firstUnlock =
             !saveData.unlockedItemIds.Contains(item.itemId);
 
-        if (item.rarity == ItemRarity.Gold)
-        {
-            UnlockAllItems();
-        }
-        else if (firstUnlock)
-        {
+        if (firstUnlock)
             saveData.unlockedItemIds.Add(item.itemId);
-        }
 
         saveData.totalDrawCount++;
         saveService.Save(saveData);
@@ -89,32 +79,19 @@ public class BlindBoxService : MonoBehaviour
         CollectionChanged?.Invoke();
     }
 
-    private List<ItemDefinition> GetAvailableItems()
+    private List<ItemDefinition> GetDrawableItems()
     {
-        List<ItemDefinition> availableItems = new();
+        List<ItemDefinition> drawableItems = new();
 
         foreach (ItemDefinition item in items)
         {
             if (item == null || string.IsNullOrWhiteSpace(item.itemId))
                 continue;
 
-            if (!saveData.unlockedItemIds.Contains(item.itemId))
-                availableItems.Add(item);
+            drawableItems.Add(item);
         }
 
-        return availableItems;
-    }
-
-    private void UnlockAllItems()
-    {
-        foreach (ItemDefinition item in items)
-        {
-            if (item == null || string.IsNullOrWhiteSpace(item.itemId))
-                continue;
-
-            if (!saveData.unlockedItemIds.Contains(item.itemId))
-                saveData.unlockedItemIds.Add(item.itemId);
-        }
+        return drawableItems;
     }
 
     private ItemDefinition DrawByWeight(IReadOnlyList<ItemDefinition> candidates)

@@ -41,9 +41,9 @@ public class ResultPanel : MonoBehaviour
         rarityText.text = $"稀有度：{GetRarityName(result.Item.rarity)}";
         rarityText.color = rarityColor;
 
-        newTagText.text = result.Item.rarity == ItemRarity.Gold
-            ? "金色品质！已解锁全部物品"
-            : "首次获得！";
+        newTagText.text = result.IsFirstUnlock
+            ? "首次获得！"
+            : "重复获得";
     }
 
     private string GetRarityName(ItemRarity rarity)
