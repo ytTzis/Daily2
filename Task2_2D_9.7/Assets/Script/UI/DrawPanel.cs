@@ -27,7 +27,8 @@ public class DrawPanel : MonoBehaviour
 
     private void OnDrawClicked()
     {
-        service.Draw();
+        if (service.CanDraw)
+            service.Draw();
     }
 
     private void Refresh()
@@ -42,5 +43,7 @@ public class DrawPanel : MonoBehaviour
             $"已解锁：{service.SaveData.unlockedItemIds?.Count ?? 0}" +
             $"/{service.Items.Count}  " +
             $"抽取次数：{service.SaveData.totalDrawCount}";
+
+        drawButton.interactable = service.CanDraw;
     }
 }

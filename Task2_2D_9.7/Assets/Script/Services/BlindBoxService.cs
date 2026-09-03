@@ -15,26 +15,56 @@ public class BlindBoxService : MonoBehaviour
     public IReadOnlyList<ItemDefinition> Items => items;
     public PlayerSaveData SaveData => saveData;
 
+    public bool CanDraw
+    {
+        get
+        {
+            if (saveData?.unlockedItemIds == null)
+                return false;
+
+            foreach (ItemDefinition item in items)
+            {
+                if (item != null &&
+                    !string.IsNullOrWhiteSpace(item.itemId) &&
+                    !saveData.unlockedItemIds.Contains(item.itemId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     private void Awake()
     {
         saveService = new SaveService();
         saveData = saveService.Load();
+        saveData.unlockedItemIds ??= new List<string>();
 
         Debug.Log($"存档位置：{saveService.SavePath}");
     }
 
     public DrawResult Draw()
     {
-        if (items.Count == 0)
-            throw new InvalidOperationException("没有配置盲盒物品");
+        List<ItemDefinition> availableItems = GetAvailableItems();
 
-        ItemDefinition item = DrawByWeight();
+        if (availableItems.Count == 0)
+            throw new InvalidOperationException("所有物品均已解锁");
+
+        ItemDefinition item = DrawByWeight(availableItems);
 
         bool firstUnlock =
             !saveData.unlockedItemIds.Contains(item.itemId);
 
-        if (firstUnlock)
+        if (item.rarity == ItemRarity.Gold)
+        {
+            UnlockAllItems();
+        }
+        else if (firstUnlock)
+        {
             saveData.unlockedItemIds.Add(item.itemId);
+        }
 
         saveData.totalDrawCount++;
         saveService.Save(saveData);
@@ -59,16 +89,44 @@ public class BlindBoxService : MonoBehaviour
         CollectionChanged?.Invoke();
     }
 
-    private ItemDefinition DrawByWeight()
+    private List<ItemDefinition> GetAvailableItems()
+    {
+        List<ItemDefinition> availableItems = new();
+
+        foreach (ItemDefinition item in items)
+        {
+            if (item == null || string.IsNullOrWhiteSpace(item.itemId))
+                continue;
+
+            if (!saveData.unlockedItemIds.Contains(item.itemId))
+                availableItems.Add(item);
+        }
+
+        return availableItems;
+    }
+
+    private void UnlockAllItems()
+    {
+        foreach (ItemDefinition item in items)
+        {
+            if (item == null || string.IsNullOrWhiteSpace(item.itemId))
+                continue;
+
+            if (!saveData.unlockedItemIds.Contains(item.itemId))
+                saveData.unlockedItemIds.Add(item.itemId);
+        }
+    }
+
+    private ItemDefinition DrawByWeight(IReadOnlyList<ItemDefinition> candidates)
     {
         int totalWeight = 0;
 
-        foreach (ItemDefinition item in items)
+        foreach (ItemDefinition item in candidates)
             totalWeight += Mathf.Max(1, item.weight);
 
         int randomValue = UnityEngine.Random.Range(0, totalWeight);
 
-        foreach (ItemDefinition item in items)
+        foreach (ItemDefinition item in candidates)
         {
             randomValue -= Mathf.Max(1, item.weight);
 
@@ -76,7 +134,7 @@ public class BlindBoxService : MonoBehaviour
                 return item;
         }
 
-        return items[^1];
+        return candidates[^1];
     }
     public void ResetSaveFromButton()
 {

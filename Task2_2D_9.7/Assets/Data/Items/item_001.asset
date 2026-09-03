@@ -16,4 +16,4 @@ MonoBehaviour:
   displayName: "\u84DD1"
   icon: {fileID: 21300000, guid: 919b2d1adc016de4eb5ee1265befb04e, type: 3}
   rarity: 0
-  weight: 1
+  weight: 10
