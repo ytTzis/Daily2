@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e66cd21c8f401247a933d8f03246933, type: 3}
   m_Name: item_003
   m_EditorClassIdentifier: 
-  itemId: item_001
+  itemId: item_003
   displayName: "\u84DD3"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 919b2d1adc016de4eb5ee1265befb04e, type: 3}
   rarity: 0
   weight: 1

@@ -78,4 +78,8 @@ public class BlindBoxService : MonoBehaviour
 
         return items[^1];
     }
+    public void ResetSaveFromButton()
+{
+    ResetSave();
+}
 }
