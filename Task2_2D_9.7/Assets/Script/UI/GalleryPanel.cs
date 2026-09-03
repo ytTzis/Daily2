@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GalleryPanel : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class GalleryPanel : MonoBehaviour
     private void OnEnable()
     {
         service.CollectionChanged += Refresh;
+        Refresh();
     }
 
     private void OnDisable()
@@ -26,15 +28,14 @@ public class GalleryPanel : MonoBehaviour
     }
 
     private void CreateItems()
-    {
-        foreach (ItemDefinition item in service.Items)
-        {
-            GalleryItemView view =
-                Instantiate(itemPrefab, content);
+{
+    views.Clear();
 
-            views.Add(view);
-        }
-    }
+    GalleryItemView[] existingViews =
+        content.GetComponentsInChildren<GalleryItemView>(true);
+
+    views.AddRange(existingViews);
+}
 
     private void Refresh()
     {
