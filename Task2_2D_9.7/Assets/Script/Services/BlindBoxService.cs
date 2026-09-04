@@ -135,4 +135,13 @@ public class BlindBoxService : MonoBehaviour
 {
     ResetSave();
 }
+public void InitializeForTests(
+    List<ItemDefinition> testItems,
+    SaveService testSaveService)
+{
+    items = testItems;
+    saveService = testSaveService;
+    saveData = saveService.Load();
+    saveData.unlockedItemIds ??= new List<string>();
+}
 }

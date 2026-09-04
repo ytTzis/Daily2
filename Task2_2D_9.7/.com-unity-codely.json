@@ -1,10 +1,10 @@
 {
-  "unity_port": 65310,
+  "unity_port": -1,
   "stream_port": 49722,
   "created_date": "2026-09-03T06:55:11.072Z",
   "project_path": "D:/Github/Daily2/Task2_2D_9.7/Assets",
   "reloading": false,
-  "reason": "ready",
-  "seq": 38808,
-  "last_heartbeat": "2026-09-03T15:38:59.018Z"
+  "reason": "unity_quit",
+  "seq": 158358,
+  "last_heartbeat": "2026-09-04T08:29:23.902Z"
 }
